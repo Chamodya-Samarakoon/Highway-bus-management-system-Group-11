@@ -15,27 +15,22 @@ public class PassengerService {
         this.repo = repo;
     }
 
+    // Register a new passenger
     public Passenger register(Passenger p) {
         return repo.save(p);
     }
 
-    public Passenger login(String email, String password) {
-        Passenger p = repo.findByEmail(email);
-        if (p != null && p.getPassword().equals(password)) {
-            return p;
-        }
-        return null;
-    }
-
-    // ⭐ THIS WAS MISSING ⭐
+    // Find by email (for login/check)
     public Passenger findByEmail(String email) {
         return repo.findByEmail(email);
     }
 
+    // FIX: This method was missing or not detected
     public Optional<Passenger> findById(String id) {
         return repo.findById(id);
     }
 
+    // Find all passengers
     public List<Passenger> findAll() {
         return repo.findAll();
     }

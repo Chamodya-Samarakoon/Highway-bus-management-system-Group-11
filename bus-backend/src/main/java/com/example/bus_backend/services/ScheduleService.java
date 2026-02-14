@@ -3,7 +3,6 @@ package com.example.bus_backend.services;
 import com.example.bus_backend.models.Schedule;
 import com.example.bus_backend.repositories.ScheduleRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +15,7 @@ public class ScheduleService {
     }
 
     public Schedule addSchedule(Schedule s) { 
+        // Automatically sync available seats with total seats on creation
         if (s.getTotalSeats() != null && s.getAvailableSeats() == null) {
             s.setAvailableSeats(s.getTotalSeats());
         }
@@ -34,7 +34,6 @@ public class ScheduleService {
         return repo.findAll(); 
     }
 
-    // ⭐ ADD THIS ⭐
     public Schedule update(String id, Schedule updated) {
         Schedule s = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Schedule not found"));
@@ -50,7 +49,6 @@ public class ScheduleService {
         return repo.save(s);
     }
 
-    // ⭐ ADD THIS ⭐
     public void delete(String id) {
         repo.deleteById(id);
     }

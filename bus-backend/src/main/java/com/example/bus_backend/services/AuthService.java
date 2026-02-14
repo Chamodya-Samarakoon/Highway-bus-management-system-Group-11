@@ -1,30 +1,33 @@
+package com.example.bus_backend.services;
 
-/* package com.example.bus_backend.services;
-
-import org.springframework.stereotype.Service;
-import com.example.bus_backend.repositories.UserRepository;
 import com.example.bus_backend.models.User;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import java.util.Collections;
+import com.example.bus_backend.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
-    private final UserRepository userRepo;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public AuthService(UserRepository userRepo) { this.userRepo = userRepo; }
+    @Autowired private UserRepository userRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
 
-    public User register(String username, String email, String password) {
-        if (userRepo.existsByUsername(username)) throw new RuntimeException("username taken");
-        if (userRepo.existsByEmail(email)) throw new RuntimeException("email taken");
-        User u = new User();
-        u.setUsername(username);
-        u.setEmail(email);
-        u.setPasswordHash(passwordEncoder.encode(password));
-        u.setRoles(Collections.singletonList("USER"));
-        return userRepo.save(u);
+    public User register(User user) {
+        if (userRepository.existsByUsername(user.getUsername())) throw new RuntimeException("Username exists");
+        
+        // HASH before saving to Compass
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
     }
 
-    // login will be handled by AuthController using JWT utilities
+    public User login(String username, String password) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
+        }
+        user.setPassword(null); 
+        return user;
+    }
 }
-*/
